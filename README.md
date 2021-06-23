@@ -5,8 +5,8 @@ The algorithm operates iteratively: starting from a coarse numerical solution on
 
 In its basic form, the parareal algorithm has the following form, where $u$ is the solution of an ODE/PDE:
 
-```math
+$$
 u_{k+1}^{n+1} = \mathcal{C}_{\Delta t} (u_{k+1}^n) +  \mathcal{F}_{\Delta t} (u_k^n) - \mathcal{C}_{\Delta t}(u_k^n) 
-```
+$$
 
-and where $`n`$ is the index of the coarse timepoints, $`k`$ is the iteration number, and $`C`$ and $`F`$ are coarse and fine solution operators to the differential equation that the parareal algorithm is aimed to solve (that depends of course on the specific application!).
+and where $n$ is the index of the coarse timepoints, $`k`$ is the iteration number, and $`C`$ and $`F`$ are coarse and fine solution operators to the differential equation that the parareal algorithm is aimed to solve (that depends of course on the specific application!).
