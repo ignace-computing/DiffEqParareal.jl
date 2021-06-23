@@ -1,22 +1,18 @@
-function Parareal(f, u0, alg, TSPAN, dtC, dtF; K=0, ncores=1)
+function Parareal(f, u0, TSPAN, dtC, algC, dtF, algF; K=0, ncores=1)
 
     # coarse time step
     prob1 = ODEProblem(f, u0, TSPAN, dt=dtC)
-    alg1 = Euler()
-    sol1 = solve(prob1, alg1, tstop=dtC)
-    int1 = init(prob1, alg1, tstop=dtC, save_everystep=false)
+    sol1 = solve(prob1, algC, tstop=dtC)
+    int1 = init(prob1, algC, tstop=dtC, save_everystep=false)
+    N = length(sol1.t)-1
 
     # fine time step
-    prob2 = ODEProblem(f, u0, TSPAN, dt=dtF)
-    alg2 = Euler()
-    int2 = init(prob2, alg2, tstop=0.1, save_everystep=false)
+    prob_fine = ODEProblem(f, u0, TSPAN, dt=dtF)
+    parallel_ints = [init(prob_fine, algF, tstop=0.1, save_everystep=false) for _ in 1:ncores]
 
-    N = ncores
-    parallel_ints = [init(prob2, alg2, tstop=0.1, save_everystep=false) for _ in 1:N]
-
-    u_solution = [x[1] for x in sol1.u]
-    u_parallel = [x[1] for x in sol1.u]
-    u_coarse = [x[1] for x in sol1.u]
+    u_solution = [x for x in sol1.u]
+    u_parallel = [x for x in sol1.u]
+    u_coarse = [x for x in sol1.u]
 
     if K == 0
         K = ceil(Int, (TSPAN[2]-TSPAN[1])/dtC)
@@ -32,20 +28,20 @@ function Parareal(f, u0, alg, TSPAN, dtC, dtF; K=0, ncores=1)
         Threads.@threads for i = k:length(sol1.t)-1
         # for i = k:length(sol1.t)-1
             int_p = parallel_ints[Threads.threadid()]
-            DiffEqBase.set_ut!(int_p, [copy(u_solution[i])], copy(sol1.t[i]))
+            DiffEqBase.set_ut!(int_p, copy(u_solution[i]), sol1.t[i])
             for _ in 1: ceil(Int, dtC/dtF)
                 step!(int_p)
             end
-            u_parallel[i+1] = int_p.u[1]
+            u_parallel[i+1] = int_p.u
         end            
 
         # SEQUENTIAL LOOP
         for i = k:length(sol1.t)-1
-            DiffEqBase.set_ut!(int1, [u_solution[i]], sol1.t[i])
+            DiffEqBase.set_ut!(int1, copy(u_solution[i]), sol1.t[i])
             step!(int1)
-            u_coarse[i+1] = int1.u[1]
+            u_coarse[i+1] = int1.u
             
-            u_solution[i+1] = int1.u[1] + u_parallel[i+1] - u_coarse[i+1]
+            u_solution[i+1] = int1.u + u_parallel[i+1] - u_coarse[i+1]
         end
 
         u_coarse = copy(u_solution)
