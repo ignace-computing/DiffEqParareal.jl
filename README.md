@@ -3,7 +3,7 @@ This package provides an implementation of the parareal algorithm, which is a pa
 ## The parareal algorithm.
 
 The algorithm requires two overlapping temporal grids, a coarse and a fine one. 
-The algorithm operates iteratively: starting from a coarse numerical solution on the coarse grid, it iteratively refines this first guess, using updates that are computed *in parallel* in each coarse interval.
+The algorithm operates iteratively: starting from a coarse numerical solution on the coarse temporal grid, it iteratively refines this first guess, using updates that are computed *in parallel* in each coarse interval.
 
 In its basic form, the parareal algorithm has the following form, where `u` is the solution of an ODE/PDE/...:
 
