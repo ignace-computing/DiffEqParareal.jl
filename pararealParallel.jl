@@ -48,8 +48,6 @@ function Parareal(f, u0, alg, TSPAN, dtC, dtF; K=0, PARALLEL=true, ncores=1)
         end
 
         u_coarse = copy(u_solution)
-
-        # HERE SHOULD COME SOME ERROR CRITERION
     end
 
     return u_solution, sol1 
