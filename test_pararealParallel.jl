@@ -11,7 +11,7 @@ using Polyester
 
 include("pararealParallel.jl")
 
-MODEL = "Lorenz"
+MODEL = "simple"
 if MODEL == "simple"
     function f(du,u,p,t)
         du[1] = -cos(u[1])*u[1]
@@ -29,7 +29,7 @@ elseif MODEL == "Lorenz"
         du[3] = u[1]*u[2] - (8/3)*u[3]
     end
     u0 = [1.0;0.0;0.0]
-    TSPAN = (0.0, 10.0)
+    TSPAN = (0.0, 100.0)
     algC = Euler()
     algF = Euler()
     dtC = 0.01   # coarse timestep
@@ -39,9 +39,13 @@ end
 println("Threads.nthreads() = ",Threads.nthreads())
 
 # 1) reference solution
-probEXACT = ODEProblem(f, u0, TSPAN, dt=dtF)
 println("REFERENCE")
-# @btime solEXACT = solve(probEXACT, algF, tstop=dtC)
+@btime begin
+    probEXACT = ODEProblem(f, u0, TSPAN, dt=dtF)
+    solEXACT = solve(probEXACT, algF, tstop=dtC)
+end
+
+probEXACT = ODEProblem(f, u0, TSPAN, dt=dtF)
 solEXACT = solve(probEXACT, algF, tstop=dtC)
 
 # 2) parareal solution
@@ -49,7 +53,7 @@ println("PARAREAL")
 K = ceil(Int, (length(solEXACT.t)-1)/(Int(dtC/dtF)))
 
 PP = Threads.nthreads()
-# @btime u_solution, sol = Parareal(f, u0, TSPAN, dtC, algC, dtF, algF, K=K, ncores=PP)
+@btime u_solution, sol = Parareal(f, u0, TSPAN, dtC, algC, dtF, algF, K=K, ncores=PP)
 u_solution, sol = Parareal(f, u0, TSPAN, dtC, algC, dtF, algF, K=K, ncores=PP)
 
 # @profilehtml u_solution, p2 = Parareal(f, u0, alg, TSPAN, dtC, dtF, ncores=PP)
@@ -67,7 +71,7 @@ end
 # 4) test the exactness property of parareal
 println("TEST")
 if length(u_solution) <= 11
-    @testset "test parareal exactness property" begin
+    @testset "parareal exactness property" begin
         K = ceil(Int, (length(solEXACT.t)-1)/(Int(dtC/dtF)))
         for k=1:K+1
             u_solution, sol = Parareal(f, u0, TSPAN, dtC, algC, dtF, algF, K=K, ncores=PP)

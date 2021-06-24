@@ -23,10 +23,10 @@ function Parareal(f, u0, TSPAN, dtC, algC, dtF, algF; K=0, ncores=1)
 
         # PARALLEL LOOP
         TT= length(sol1.t)-1-k
-        # @floop ThreadedEx(basesize=TT+ncores) for i = k:length(sol1.t)-1
-        # @batch per=thread for i = k:length(sol1.t)-1
-        Threads.@threads for i = k:length(sol1.t)-1
-        # for i = k:length(sol1.t)-1
+        @floop ThreadedEx(basesize=TT+ncores) for i = k:length(sol1.t)-1
+        #@batch per=thread for i = k:length(sol1.t)-1
+        #Threads.@threads for i = k:length(sol1.t)-1
+        #for i = k:length(sol1.t)-1
             int_p = parallel_ints[Threads.threadid()]
             DiffEqBase.set_ut!(int_p, copy(u_solution[i]), sol1.t[i])
             for _ in 1: ceil(Int, dtC/dtF)
