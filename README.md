@@ -15,9 +15,9 @@ where `n` is the index of the coarse timepoints, `k` is the iteration number, an
 
 ## TO DO: 
 
-- [ ] Make the implemented algorithm run correctly in parallel. Best way forward is to run and read through`test_pararealParallel.jl`. In `pararealParallel.jl` I have added several suggestions for parallellism (using [`Threads.jl`](https://docs.julialang.org/en/v1/base/multi-threading/), [`Polyester.jl`](https://github.com/JuliaSIMD/Polyester.jl) or [`FLoops.jl`](https://github.com/JuliaFolds/FLoops.jl), see lines 30-32), but none of them is working actually. I am not sure how we can resolve this.
-- [ ] Test parallel scalability.
+- [ ] Improve parallel scalability! For now scaling results are awful, parallel execution takes longer than serial execution.
 - [ ] Carry out experiments with interesting applications.
+- [x] Make the implemented algorithm run correctly in parallel. Best way forward is to run and read through`test_pararealParallel.jl`. In `pararealParallel.jl` I have added several suggestions for parallellism (using [`Threads.jl`](https://docs.julialang.org/en/v1/base/multi-threading/), [`Polyester.jl`](https://github.com/JuliaSIMD/Polyester.jl) or [`FLoops.jl`](https://github.com/JuliaFolds/FLoops.jl), see lines 30-32), but none of them is working actually. I am not sure how we can resolve this.
 
 ## References
 [1] J.-L. Lions, Y. Maday, and G. Turinici, “A ‘parareal’ in time discretization of PDE’s,” Comptes Rendus de l’Académie des Sciences - Series I - Mathematics, vol. 332, pp. 661–668, 2001 [Online]. Available at: http://dx.doi.org/10.1016/S0764-4442(00)01793-6
