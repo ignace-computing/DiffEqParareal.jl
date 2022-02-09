@@ -1,3 +1,5 @@
+If you are interested in using this package, do not hesitate to contact me (see Github profile for contact information).
+
 This package provides an implementation of the parareal algorithm, which is a parallel-in-time method for the solution of time-dependent differential equations, such as ordinary differential equations (ODEs) and partial differential equations (PDEs). Under the hood, it uses the [`DifferentialEquations.jl`](https://github.com/SciML/DifferentialEquations.jl) package, that comes with a variety of solvers and possibilities. 
 
 ## The parareal algorithm.
